@@ -21,8 +21,12 @@ const Admin = () => {
   const [existingImages, setExistingImages] = useState([]); // Track Cloudinary URLs
   const [editId, setEditId] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [activeTab, setActiveTab] = useState("products"); // "products" or "orders"
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
 
   const API_URL = `${import.meta.env.VITE_API_URL || ""}/api/products`;
+  const ORDERS_API_URL = `${import.meta.env.VITE_API_URL || ""}/api/orders`;
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
@@ -30,6 +34,7 @@ const Admin = () => {
       navigate("/admin-login");
     } else {
       fetchProducts(token);
+      fetchOrders(token);
     }
   }, [navigate]);
 
@@ -46,6 +51,24 @@ const Admin = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchOrders = async (token) => {
+    setOrdersLoading(true);
+    try {
+      const { data } = await axios.get(ORDERS_API_URL, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      if (error.response && error.response.status === 401) {
+        localStorage.removeItem("adminToken");
+        navigate("/admin-login");
+      }
+    } finally {
+      setOrdersLoading(false);
     }
   };
 
@@ -72,6 +95,18 @@ const Admin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // 🔥 IMAGE VALIDATION
+    if (!editId && images.length === 0) {
+      alert("Please upload at least one image of the product! 🖼️");
+      return;
+    }
+
+    if (editId && existingImages.length === 0 && images.length === 0) {
+      alert("A product must have at least one image! 🖼️");
+      return;
+    }
+
     setIsSubmitting(true);
     const data = new FormData();
     data.append("name", formData.name);
@@ -197,21 +232,33 @@ const Admin = () => {
             </div>
           </div>
         </div>
-
-        {/* Action Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Product Management</h1>
-            <p className="text-gray-500 mt-1">Add, edit, and manage your inventory easily.</p>
+        {/* Action Header & Tabs */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+          <div className="flex items-center space-x-1 bg-gray-200/50 p-1 rounded-2xl w-fit">
+            <button
+              onClick={() => setActiveTab("products")}
+              className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === "products" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              Inventory
+            </button>
+            <button
+              onClick={() => setActiveTab("orders")}
+              className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === "orders" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              Orders
+            </button>
           </div>
-          <button
-            onClick={() => { resetForm(); setShowAddForm(!showAddForm); }}
-            className={`flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all ${
-              showAddForm ? "bg-gray-200 text-gray-700" : "bg-[#86bd22] text-white shadow-lg shadow-green-200 hover:scale-105 active:scale-95"
-            }`}
-          >
-            {showAddForm ? <><FiX /> <span>Cancel</span></> : <><FiPlus /> <span>Add New Product</span></>}
-          </button>
+          
+          {activeTab === "products" && (
+            <button
+              onClick={() => { resetForm(); setShowAddForm(!showAddForm); }}
+              className={`flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                showAddForm ? "bg-gray-200 text-gray-700" : "bg-[#86bd22] text-white shadow-lg shadow-green-200 hover:scale-105 active:scale-95"
+              }`}
+            >
+              {showAddForm ? <><FiX /> <span>Cancel</span></> : <><FiPlus /> <span>Add New Product</span></>}
+            </button>
+          )}
         </div>
 
         {/* Add/Edit Form Section */}
@@ -373,80 +420,139 @@ const Admin = () => {
             </div>
           </div>
         )}
-
-        {/* Product List Section */}
-        <div className="space-y-6">
-          <div className="flex items-center space-x-2">
-            <h2 className="text-2xl font-bold text-gray-900">Live Inventory</h2>
-            <span className="bg-green-100 text-[#86bd22] text-xs font-bold px-2.5 py-1 rounded-full">{products.length} Items</span>
-          </div>
-
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20 space-y-4">
-              <div className="w-12 h-12 border-4 border-[#86bd22] border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-gray-500 font-medium">Fetching your products...</p>
+        {/* Main Content Area */}
+        {activeTab === "products" ? (
+          <div className="space-y-6">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-2xl font-bold text-gray-900">Live Inventory</h2>
+              <span className="bg-green-100 text-[#86bd22] text-xs font-bold px-2.5 py-1 rounded-full">{products.length} Items</span>
             </div>
-          ) : products.length === 0 ? (
-            <div className="bg-white rounded-3xl p-20 text-center border border-dashed border-gray-200">
-              <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FiPackage size={40} className="text-gray-300" />
+
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                <div className="w-12 h-12 border-4 border-[#86bd22] border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-500 font-medium">Fetching your products...</p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900">No products found</h3>
-              <p className="text-gray-500 mt-2">Your shop is empty. Start adding some products!</p>
-              <button 
-                onClick={() => setShowAddForm(true)}
-                className="mt-6 font-bold text-[#86bd22] hover:underline"
-              >
-                Add your first product
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map(product => (
-                <div key={product._id} className="group bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
-                  {/* Image Container */}
-                  <div className="relative aspect-square overflow-hidden bg-gray-50">
-                    <img
-                      src={product.images[0] ? (product.images[0].startsWith("http") ? product.images[0] : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${product.images[0]}`) : "https://via.placeholder.com/300"}
-                      alt={product.name}
-                      className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${product.isSold ? "grayscale" : ""}`}
-                    />
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <span className="bg-white/90 backdrop-blur-sm text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">₹{product.price}</span>
-                      <span className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ${product.quality === 'premium' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>{product.quality}</span>
-                      {product.isSold && <span className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">SOLD OUT</span>}
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5">
-                    <div className="w-full flex items-start justify-between mb-2">
-                      <h3 className="text-lg font-bold text-gray-900 truncate pr-4">{product.name}</h3>
-                      <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">{product.category}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-4 mt-6">
-                      <button
-                        onClick={() => handleEdit(product)}
-                        className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-gray-50 text-gray-700 rounded-xl font-bold hover:bg-gray-100 transition-colors border border-gray-100"
-                      >
-                        <FiEdit2 size={16} />
-                        <span>Edit</span>
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product._id)}
-                        className="p-2.5 text-red-100 hover:text-red-500 transition-colors"
-                        title="Delete Product"
-                      >
-                        <FiTrash2 size={20} />
-                      </button>
-                    </div>
-                  </div>
+            ) : products.length === 0 ? (
+              <div className="bg-white rounded-3xl p-20 text-center border border-dashed border-gray-200">
+                <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FiPackage size={40} className="text-gray-300" />
                 </div>
-              ))}
+                <h3 className="text-xl font-bold text-gray-900">No products found</h3>
+                <p className="text-gray-500 mt-2">Your shop is empty. Start adding some products!</p>
+                <button 
+                  onClick={() => setShowAddForm(true)}
+                  className="mt-6 font-bold text-[#86bd22] hover:underline"
+                >
+                  Add your first product
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {products.map(product => (
+                  <div key={product._id} className="group bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                    {/* Image Container */}
+                    <div className="relative aspect-square overflow-hidden bg-gray-50">
+                      <img
+                        src={product.images[0] ? (product.images[0].startsWith("http") ? product.images[0] : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${product.images[0]}`) : "https://via.placeholder.com/300"}
+                        alt={product.name}
+                        className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${product.isSold ? "grayscale" : ""}`}
+                      />
+                      <div className="absolute top-4 left-4 flex gap-2">
+                        <span className="bg-white/90 backdrop-blur-sm text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">₹{product.price}</span>
+                        <span className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ${product.quality === 'premium' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>{product.quality}</span>
+                        {product.isSold && <span className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">SOLD OUT</span>}
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-5">
+                      <div className="w-full flex items-start justify-between mb-2">
+                        <h3 className="text-lg font-bold text-gray-900 truncate pr-4">{product.name}</h3>
+                        <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">{product.category}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 mt-6">
+                        <button
+                          onClick={() => handleEdit(product)}
+                          className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-gray-50 text-gray-700 rounded-xl font-bold hover:bg-gray-100 transition-colors border border-gray-100"
+                        >
+                          <FiEdit2 size={16} />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product._id)}
+                          className="p-2.5 text-red-100 hover:text-red-500 transition-colors"
+                          title="Delete Product"
+                        >
+                          <FiTrash2 size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-2xl font-bold text-gray-900">Recent Orders</h2>
+              <span className="bg-purple-100 text-purple-600 text-xs font-bold px-2.5 py-1 rounded-full">{orders.length} Completed</span>
             </div>
-          )}
-        </div>
+
+            {ordersLoading ? (
+              <div className="flex flex-col items-center justify-center py-20">
+                <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="bg-white rounded-3xl p-20 text-center border border-gray-100">
+                <FiPackage size={40} className="text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900">No paid orders yet</h3>
+                <p className="text-gray-500 mt-2">Orders will appear here once customers complete their payments.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {orders.map(order => (
+                  <div key={order._id} className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-xs font-black uppercase text-gray-400">Order #{order._id.slice(-8)}</span>
+                          <span className="bg-green-100 text-green-700 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">PAID</span>
+                          <span className="text-xs text-gray-400 font-medium">{new Date(order.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{order.customer.name}</h3>
+                        <p className="text-sm text-gray-500 font-medium">{order.customer.email} • {order.customer.phone}</p>
+                        <p className="text-xs text-gray-400 mt-1 italic">{order.customer.address}, {order.customer.city} ({order.customer.pincode})</p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 lg:justify-end">
+                        {order.orderItems.map((item, idx) => (
+                          <div key={idx} className="relative group/item">
+                            <img 
+                              src={item.image.startsWith("http") ? item.image : `${import.meta.env.VITE_API_URL || ""}${item.image}`} 
+                              alt={item.name} 
+                              className="w-14 h-14 rounded-xl object-cover border border-gray-100 shadow-sm"
+                            />
+                            <div className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity flex-col">
+                              <span>₹{item.price}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="lg:text-right min-w-[120px]">
+                        <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Total Value</p>
+                        <p className="text-2xl font-black text-black">₹{order.totalPrice}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

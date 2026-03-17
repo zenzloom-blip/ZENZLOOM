@@ -25,7 +25,7 @@ export const createOrder = async (req, res) => {
       orderItems: cartItems.map(item => ({
         name: item.name,
         price: item.price,
-        image: item.images[0],
+        image: item.images && item.images.length > 0 ? item.images[0] : "https://via.placeholder.com/300",
         product: item._id
       })),
       totalPrice: amount,
@@ -84,5 +84,14 @@ export const verifyPayment = async (req, res) => {
     }
   } else {
     res.status(400).json({ message: "Invalid signature, payment verification failed" });
+  }
+};
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ isPaid: true }).sort({ createdAt: -1 });
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };

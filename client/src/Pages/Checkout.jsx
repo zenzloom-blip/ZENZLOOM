@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import axios from "axios";
 
 const Checkout = () => {
-    const { cartItems } = useCart();
+    const navigate = useNavigate();
+    const { cartItems, clearCart } = useCart();
     const [customer, setCustomer] = useState({
         name: "",
         email: "",
@@ -52,7 +54,8 @@ const Checkout = () => {
                             razorpay_signature: response.razorpay_signature,
                         });
                         alert("Payment Successful 🎉 Order placed.");
-                        window.location.href = "/";
+                        clearCart();
+                        navigate("/order-success", { state: { orderId: response.razorpay_order_id } });
                     } catch (err) {
                         alert("Payment verification failed. Please contact support.");
                     }

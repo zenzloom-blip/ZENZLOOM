@@ -52,6 +52,10 @@ export const createProduct = async (req, res) => {
     // images will come from Cloudinary via req.files
     const images = req.files ? req.files.map(file => file.path) : [];
 
+    if (images.length === 0) {
+      return res.status(400).json({ message: "At least one product image is required 🖼️" });
+    }
+
     const product = new Product({
       name,
       description,
