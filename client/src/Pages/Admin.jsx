@@ -22,7 +22,7 @@ const Admin = () => {
   const [editId, setEditId] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/products`;
+  const API_URL = `${import.meta.env.VITE_API_URL || ""}/api/products`;
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");

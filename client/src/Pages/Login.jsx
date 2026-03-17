@@ -11,7 +11,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const API_BASE_URL = import.meta.env.VITE_API_URL || "";
       const { data } = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         username,
         password,

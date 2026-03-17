@@ -6,7 +6,7 @@ const ProductCard = ({ product }) => {
       {/* IMAGE CONTAINER */}
       <Link to={`/product/${product._id}`} className="block relative aspect-[3/4] overflow-hidden rounded-2xl bg-gray-100">
         <img
-          src={product.images?.[0] ? (product.images[0].startsWith("http") ? product.images[0] : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${product.images[0]}`) : "https://via.placeholder.com/400"}
+          src={product.images[0] ? (product.images[0].startsWith("http") ? product.images[0] : `${import.meta.env.VITE_API_URL || ""}${product.images[0]}`) : "https://via.placeholder.com/300"}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />

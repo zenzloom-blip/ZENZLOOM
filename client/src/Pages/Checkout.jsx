@@ -25,7 +25,7 @@ const Checkout = () => {
 
     const handlePayment = async () => {
         try {
-            const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+            const API_BASE_URL = import.meta.env.VITE_API_URL || "";
             // Create order in backend
             const res = await axios.post(`${API_BASE_URL}/api/payment/create-order`, {
                 amount: totalAmount,
@@ -44,7 +44,7 @@ const Checkout = () => {
                 order_id: order.id,
                 handler: async function (response) {
                     try {
-                        const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+                        const API_BASE_URL = import.meta.env.VITE_API_URL || "";
                         // Verify payment in backend
                         await axios.post(`${API_BASE_URL}/api/payment/verify-payment`, {
                             razorpay_order_id: response.razorpay_order_id,

@@ -30,7 +30,7 @@ const ProductDetails = () => {
             setProduct(data);
             if (data.images && data.images.length > 0) {
                 const firstImage = data.images[0];
-                const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+                const apiUrl = import.meta.env.VITE_API_URL || "";
                 setSelectedImage(firstImage.startsWith("http") ? firstImage : `${apiUrl}${firstImage}`);
             }
         };
@@ -81,14 +81,14 @@ const ProductDetails = () => {
                             <button
                                 key={index}
                                 onClick={() => {
-                                    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+                                    const apiUrl = import.meta.env.VITE_API_URL || "";
                                     setSelectedImage(img.startsWith("http") ? img : `${apiUrl}${img}`);
                                 }}
                                 className={`aspect-square w-24 rounded-2xl overflow-hidden border-2 transition-all ${
-                                    selectedImage === (img.startsWith("http") ? img : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${img}`) ? "border-black scale-95 shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
+                                    selectedImage === (img.startsWith("http") ? img : `${import.meta.env.VITE_API_URL || ""}${img}`) ? "border-black scale-95 shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
                                 }`}
                             >
-                                <img src={img.startsWith("http") ? img : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${img}`} alt={`view-${index}`} className="w-full h-full object-cover" />
+                                <img src={img.startsWith("http") ? img : `${import.meta.env.VITE_API_URL || ""}${img}`} alt={`view-${index}`} className="w-full h-full object-cover" />
                             </button>
                         ))}
                     </div>
