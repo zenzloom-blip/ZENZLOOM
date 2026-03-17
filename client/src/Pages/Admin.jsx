@@ -26,7 +26,7 @@ const Admin = () => {
   const [ordersLoading, setOrdersLoading] = useState(false);
 
   const API_URL = `${import.meta.env.VITE_API_URL || ""}/api/products`;
-  const ORDERS_API_URL = `${import.meta.env.VITE_API_URL || ""}/api/orders`;
+  const ORDERS_API_URL = `${import.meta.env.VITE_API_URL || ""}/api/payment`;
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
