@@ -38,7 +38,7 @@ export const createOrder = async (req, res) => {
     res.status(200).json(razorpayOrder);
   } catch (error) {
     console.error("🔥 Razorpay Order Creation Failed!");
-    console.error("Data sent to Razorpay:", { amount, customer, cartItems: cartItems.length });
+    console.error("Request Body:", req.body);
     console.error("Error Details:", error);
     res.status(500).json({
       message: "Razorpay order creation failed. Check server logs.",
