@@ -50,7 +50,7 @@ const Shop = () => {
           <Link to="/" className="btn-outline">Go Back Home</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
           {products.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}

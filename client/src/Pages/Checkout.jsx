@@ -70,8 +70,14 @@ const Checkout = () => {
             const rzp = new window.Razorpay(options);
             rzp.open();
         } catch (error) {
-            console.error("Payment Error:", error);
-            alert("Failed to initiate payment.");
+            console.error("❌ Payment Initiation Failed!");
+            if (error.response) {
+                console.error("Server Response Data:", error.response.data);
+                console.error("Server Status:", error.response.status);
+            } else {
+                console.error("Error Message:", error.message);
+            }
+            alert(`Failed to initiate payment: ${error.response?.data?.message || error.message}`);
         }
     };
 

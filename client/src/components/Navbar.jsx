@@ -77,11 +77,23 @@ function Navbar() {
               key={item.name}
               to={item.path}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-lg font-bold uppercase tracking-widest"
+              className="text-lg font-bold uppercase tracking-widest flex justify-between items-center"
             >
               {item.name}
             </Link>
           ))}
+          <Link
+            to="/cart"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="text-lg font-bold uppercase tracking-widest flex justify-between items-center pt-4 border-t border-gray-100"
+          >
+            <span>My Cart</span>
+            {cartItems.length > 0 && (
+              <span className="bg-black text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full">
+                {cartItems.length}
+              </span>
+            )}
+          </Link>
         </div>
       )}
     </nav>

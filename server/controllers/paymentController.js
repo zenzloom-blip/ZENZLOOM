@@ -37,10 +37,13 @@ export const createOrder = async (req, res) => {
 
     res.status(200).json(razorpayOrder);
   } catch (error) {
-    console.error("🔥 Razorpay ERROR:", error);
+    console.error("🔥 Razorpay Order Creation Failed!");
+    console.error("Data sent to Razorpay:", { amount, customer, cartItems: cartItems.length });
+    console.error("Error Details:", error);
     res.status(500).json({
-      message: "Razorpay order creation failed",
+      message: "Razorpay order creation failed. Check server logs.",
       error: error.message,
+      stack: process.env.NODE_ENV === "production" ? null : error.stack,
     });
   }
 };
