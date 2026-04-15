@@ -54,10 +54,9 @@
 
 import { useEffect, useState } from "react";
 import { fetchAllProducts } from "../services/productService";
-import ProductCard from "../components/ProductCard";
-import CategoryCard from "../components/CategoryCard";
 import { Link } from "react-router-dom";
 import Loader from "../components/Loader";
+import OptimizedImage from "../components/OptimizedImage";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -92,10 +91,12 @@ const Home = () => {
       {/* HERO SECTION */}
       <section className="relative h-[90vh] flex items-center overflow-hidden bg-black">
         <div className="absolute inset-0 opacity-60">
-          <img
+          <OptimizedImage
             src="/hero banner.jpg"
             alt="Hero"
-            className="w-full h-full object-cover scale-105 animate-pulse-slow"
+            width={1920}
+            height={1080}
+            imgClassName="animate-pulse-slow"
           />
         </div>
         <div className="relative max-w-7xl mx-auto px-6 w-full text-white">
@@ -167,7 +168,13 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
           <div className="relative">
             <div className="aspect-[4/5] bg-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-              <img src="/hoodies.jpg" alt="Sustainability" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+              <OptimizedImage 
+                src="/hoodies.jpg" 
+                alt="Sustainability" 
+                width={800}
+                height={1000}
+                imgClassName="grayscale hover:grayscale-0" 
+              />
             </div>
             <div className="absolute -bottom-10 -right-10 bg-white text-black p-10 rounded-2xl hidden lg:block">
               <p className="text-4xl font-black leading-tight">100% <br /> Authentic</p>

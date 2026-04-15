@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { fetchProductById } from "../services/productService";
 import { useCart } from "../context/CartContext";
 import Loader from "../components/Loader";
+import OptimizedImage from "../components/OptimizedImage";
+import { optimizeCloudinaryUrl } from "../utils/imageUtils";
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -17,8 +19,11 @@ const ProductDetails = () => {
         const x = ((e.clientX - left) / width) * 100;
         const y = ((e.clientY - top) / height) * 100;
 
+        // Use a higher quality image for zoom
+        const zoomedImage = optimizeCloudinaryUrl(selectedImage, { width: 1500, quality: 90 });
+
         setZoomStyle({
-            backgroundImage: `url(${selectedImage})`,
+            backgroundImage: `url(${zoomedImage})`,
             backgroundPosition: `${x}% ${y}%`,
             backgroundSize: "250%",
         });
@@ -64,7 +69,13 @@ const ProductDetails = () => {
                         {isZooming ? (
                             <div className="w-full h-full transition-transform duration-200" style={zoomStyle} />
                         ) : (
-                            <img src={selectedImage} alt={product.name} className="w-full h-full object-cover" />
+                            <OptimizedImage 
+                                src={selectedImage} 
+                                alt={product.name} 
+                                width={1200}
+                                height={1500}
+                                className="w-full h-full"
+                            />
                         )}
                         
                         {/* QUALITY BADGE */}
@@ -88,7 +99,13 @@ const ProductDetails = () => {
                                     selectedImage === (img.startsWith("http") ? img : `${import.meta.env.VITE_API_URL || ""}${img}`) ? "border-black scale-95 shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
                                 }`}
                             >
-                                <img src={img.startsWith("http") ? img : `${import.meta.env.VITE_API_URL || ""}${img}`} alt={`view-${index}`} className="w-full h-full object-cover" />
+                                <OptimizedImage 
+                                    src={img} 
+                                    alt={`view-${index}`} 
+                                    width={200}
+                                    height={200}
+                                    className="w-full h-full"
+                                />
                             </button>
                         ))}
                     </div>

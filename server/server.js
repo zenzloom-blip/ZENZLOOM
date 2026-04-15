@@ -44,7 +44,7 @@ app.use("/api/products", productRoutes);
 app.use((err, req, res, next) => {
   console.error("🔥 GLOBAL ERROR:", err);
   if (err.storageErrors) {
-     console.error("📦 STORAGE ERRORS:", err.storageErrors);
+    console.error("📦 STORAGE ERRORS:", err.storageErrors);
   }
   res.status(err.status || 500).json({
     message: err.message || "Internal Server Error",

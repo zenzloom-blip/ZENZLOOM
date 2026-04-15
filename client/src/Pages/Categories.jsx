@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import CategoryCard from "../components/CategoryCard";
+import OptimizedImage from "../components/OptimizedImage";
 
 const Categories = () => {
   const categories = [
@@ -31,10 +32,12 @@ const Categories = () => {
         {categories.map((cat) => (
           <div key={cat.type} className="group relative aspect-[4/5] overflow-hidden rounded-3xl bg-gray-100 shadow-2xl transition hover:-translate-y-2 duration-500">
             <Link to={`/category/${cat.type}`} className="block w-full h-full relative">
-              <img 
+              <OptimizedImage 
                 src={cat.img} 
                 alt={cat.name} 
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" 
+                width={800}
+                height={1000}
+                imgClassName="grayscale group-hover:grayscale-0 group-hover:scale-110" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
               

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import OptimizedImage from "./OptimizedImage";
 
 const CategoryCard = ({ category }) => {
   return (
@@ -6,10 +7,12 @@ const CategoryCard = ({ category }) => {
       to={`/category/${category.type}`}
       className="group relative h-[400px] overflow-hidden rounded-2xl bg-gray-200 card-hover"
     >
-      <img
+      <OptimizedImage
         src={category.img}
         alt={category.name}
-        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        width={800}
+        height={400}
+        imgClassName="group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
         <h3 className="text-white text-3xl font-black uppercase tracking-tighter mb-2 transform transition-transform duration-500 group-hover:-translate-y-2">
