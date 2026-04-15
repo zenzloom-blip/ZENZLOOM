@@ -54,6 +54,8 @@
 
 import { useEffect, useState } from "react";
 import { fetchAllProducts } from "../services/productService";
+import ProductCard from "../components/ProductCard";
+import CategoryCard from "../components/CategoryCard";
 import { Link } from "react-router-dom";
 import Loader from "../components/Loader";
 import OptimizedImage from "../components/OptimizedImage";
