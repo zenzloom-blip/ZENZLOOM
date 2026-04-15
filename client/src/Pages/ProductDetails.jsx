@@ -19,13 +19,13 @@ const ProductDetails = () => {
         const x = ((e.clientX - left) / width) * 100;
         const y = ((e.clientY - top) / height) * 100;
 
-        // Use a higher quality image for zoom
-        const zoomedImage = optimizeCloudinaryUrl(selectedImage, { width: 1500, quality: 90 });
+        // Use a high-quality but manageable image for zoom
+        const zoomedImage = optimizeCloudinaryUrl(selectedImage, { width: 1200, quality: "auto" });
 
         setZoomStyle({
             backgroundImage: `url(${zoomedImage})`,
             backgroundPosition: `${x}% ${y}%`,
-            backgroundSize: "250%",
+            backgroundSize: "200%",
         });
     };
 
@@ -64,17 +64,22 @@ const ProductDetails = () => {
                         onMouseLeave={() => setIsZooming(false)}
                         onMouseMove={handleMouseMove}
                     >
-                        {isZooming ? (
-                            <div className="w-full h-full transition-transform duration-200" style={zoomStyle} />
-                        ) : (
+                        <div className="w-full h-full relative">
+                            {/* Base Image (Always there) */}
                             <OptimizedImage 
                                 src={selectedImage} 
                                 alt={product.name} 
-                                width={1200}
-                                height={1500}
-                                className="w-full h-full"
+                                width={800} // Reduced for faster initial load
+                                height={1000}
+                                className={`w-full h-full transition-opacity duration-300 ${isZooming ? 'opacity-0' : 'opacity-100'}`}
                             />
-                        )}
+
+                            {/* Zoom Overlay (Fades in) */}
+                            <div 
+                                className={`absolute inset-0 w-full h-full transition-opacity duration-300 ${isZooming ? 'opacity-100' : 'opacity-0'}`}
+                                style={isZooming ? zoomStyle : {}} 
+                            />
+                        </div>
                         
                         {/* QUALITY BADGE */}
                         <div className="absolute top-6 left-6">
