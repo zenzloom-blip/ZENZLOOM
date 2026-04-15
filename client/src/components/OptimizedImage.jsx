@@ -17,12 +17,6 @@ const OptimizedImage = ({
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
 
-  // Reset state when source changes (crucial for carousels)
-  useEffect(() => {
-    setIsLoaded(false);
-    setError(false);
-  }, [src]);
-
   // 1. Resolve the base URL (handles local vs remote)
   const resolvedUrl = getImageUrl(src);
 
@@ -33,30 +27,37 @@ const OptimizedImage = ({
     crop,
   });
 
+  // Reset state when source changes
+  useEffect(() => {
+    setIsLoaded(false);
+    setError(false);
+  }, [src]);
+
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      {/* SKELETON LOADER */}
+    <div className={`relative overflow-hidden w-full h-full ${className}`}>
+      {/* SKELETON LOADER - Only show if not loaded and no error */}
       {!isLoaded && !error && (
-        <div className="absolute inset-0 skeleton z-10" />
+        <div className="absolute inset-0 skeleton z-10 w-full h-full" />
       )}
 
       {/* ACTUAL IMAGE */}
       <img
+        key={optimizedUrl} // Force re-render on URL change
         src={optimizedUrl}
         alt={alt}
         loading={loading}
         onLoad={() => setIsLoaded(true)}
         onError={() => setError(true)}
-        className={`w-full h-full object-cover transition-all duration-700 ${
-          isLoaded ? "opacity-100 scale-100" : "opacity-0 scale-105"
+        className={`w-full h-full object-cover transition-opacity duration-500 ${
+          isLoaded ? "opacity-100" : "opacity-0"
         } ${props.imgClassName || ""}`}
         {...props}
       />
 
       {/* ERROR FALLBACK */}
       {error && (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-xs text-center p-2 font-bold uppercase tracking-widest">
-          Failed to load image
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-[10px] text-center p-2 font-black uppercase tracking-widest z-20">
+          Image Unavailable
         </div>
       )}
     </div>
