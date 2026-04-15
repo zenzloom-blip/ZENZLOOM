@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { optimizeCloudinaryUrl, getImageUrl } from "../utils/imageUtils";
 
 /**
@@ -16,6 +16,12 @@ const OptimizedImage = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+
+  // Reset state when source changes (crucial for carousels)
+  useEffect(() => {
+    setIsLoaded(false);
+    setError(false);
+  }, [src]);
 
   // 1. Resolve the base URL (handles local vs remote)
   const resolvedUrl = getImageUrl(src);

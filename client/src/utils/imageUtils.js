@@ -47,7 +47,12 @@ export const optimizeCloudinaryUrl = (url, options = {}) => {
 export const getImageUrl = (img) => {
   if (!img) return "https://via.placeholder.com/300";
   if (img.startsWith("http")) return img;
+  if (img.startsWith("/")) return img; // Local asset in public folder
   
   const apiUrl = import.meta.env.VITE_API_URL || "";
-  return `${apiUrl}${img}`;
+  // Ensure no double slashes or missing slashes
+  const baseUrl = apiUrl.endsWith("/") ? apiUrl.slice(0, -1) : apiUrl;
+  const path = img.startsWith("/") ? img : `/${img}`;
+  
+  return `${baseUrl}${path}`;
 };

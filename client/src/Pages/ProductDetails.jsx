@@ -4,7 +4,7 @@ import { fetchProductById } from "../services/productService";
 import { useCart } from "../context/CartContext";
 import Loader from "../components/Loader";
 import OptimizedImage from "../components/OptimizedImage";
-import { optimizeCloudinaryUrl } from "../utils/imageUtils";
+import { optimizeCloudinaryUrl, getImageUrl } from "../utils/imageUtils";
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -34,9 +34,7 @@ const ProductDetails = () => {
             const data = await fetchProductById(id);
             setProduct(data);
             if (data.images && data.images.length > 0) {
-                const firstImage = data.images[0];
-                const apiUrl = import.meta.env.VITE_API_URL || "";
-                setSelectedImage(firstImage.startsWith("http") ? firstImage : `${apiUrl}${firstImage}`);
+                setSelectedImage(getImageUrl(data.images[0]));
             }
         };
         loadProduct();
@@ -91,12 +89,9 @@ const ProductDetails = () => {
                         {product.images.map((img, index) => (
                             <button
                                 key={index}
-                                onClick={() => {
-                                    const apiUrl = import.meta.env.VITE_API_URL || "";
-                                    setSelectedImage(img.startsWith("http") ? img : `${apiUrl}${img}`);
-                                }}
+                                onClick={() => setSelectedImage(getImageUrl(img))}
                                 className={`aspect-square w-24 rounded-2xl overflow-hidden border-2 transition-all ${
-                                    selectedImage === (img.startsWith("http") ? img : `${import.meta.env.VITE_API_URL || ""}${img}`) ? "border-black scale-95 shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
+                                    selectedImage === getImageUrl(img) ? "border-black scale-95 shadow-lg" : "border-transparent opacity-60 hover:opacity-100"
                                 }`}
                             >
                                 <OptimizedImage 
