@@ -137,10 +137,34 @@ const Home = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {categories.map((cat) => (
-            <CategoryCard key={cat.type} category={cat} priority={true} />
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 sm:gap-8 h-auto md:h-[800px]">
+          {/* FEATURED: HOODIES (Big) */}
+          <CategoryCard 
+            category={categories[0]} 
+            priority={true} 
+            className="md:col-span-2 md:row-span-2 aspect-[4/5] md:aspect-auto" 
+          />
+          
+          {/* T-SHIRTS (Wide) */}
+          <CategoryCard 
+            category={categories[1]} 
+            priority={true} 
+            className="md:col-span-2 md:row-span-1 aspect-[4/3] md:aspect-auto" 
+          />
+          
+          {/* JEANS (Small) */}
+          <CategoryCard 
+            category={categories[2]} 
+            priority={true} 
+            className="md:col-span-1 md:row-span-1 aspect-square md:aspect-auto" 
+          />
+          
+          {/* SHIRTS (Small) */}
+          <CategoryCard 
+            category={categories[3]} 
+            priority={true} 
+            className="md:col-span-1 md:row-span-1 aspect-square md:aspect-auto" 
+          />
         </div>
       </section>
 
