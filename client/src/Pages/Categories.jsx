@@ -11,24 +11,24 @@ const Categories = () => {
   ];
 
   return (
-    <div className="pt-32 pb-24 px-6 max-w-7xl mx-auto">
+    <div className="pt-24 sm:pt-32 pb-20 sm:pb-24 px-4 sm:px-6 max-w-7xl mx-auto">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-baseline mb-16 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-baseline mb-8 sm:mb-16 gap-4">
         <div>
-          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+          <nav className="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 sm:mb-4">
             <Link to="/" className="hover:text-black transition">Home</Link>
             <span>/</span>
             <span className="text-black">Categories</span>
           </nav>
-          <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tighter">Collections</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">Collections</h1>
         </div>
-        <p className="text-gray-500 font-medium">
+        <p className="text-gray-500 font-medium text-sm sm:text-base">
           Explore our {categories.length} curated categories
         </p>
       </div>
 
       {/* CATEGORY GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
         {categories.map((cat) => (
           <div key={cat.type} className="group relative aspect-[4/5] overflow-hidden rounded-3xl bg-gray-100 shadow-2xl transition hover:-translate-y-2 duration-500">
             <Link to={`/category/${cat.type}`} className="block w-full h-full relative">
@@ -41,16 +41,16 @@ const Categories = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
               
-              <div className="absolute bottom-10 left-10 text-white">
-                <span className="inline-block px-3 py-1 mb-4 border border-white/30 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-sm">
+              <div className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10 text-white">
+                <span className="inline-block px-3 py-1 mb-2 sm:mb-4 border border-white/30 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest backdrop-blur-sm">
                   Curated Collection
                 </span>
-                <h2 className="text-4xl font-black uppercase tracking-tighter leading-none mb-4 group-hover:translate-x-2 transition-transform duration-500">
+                <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter leading-none mb-2 sm:mb-4 group-hover:translate-x-2 transition-transform duration-500">
                   {cat.name}
                 </h2>
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                <div className="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
                   View Pieces
-                  <span className="text-xl">→</span>
+                  <span className="text-lg sm:text-xl">→</span>
                 </div>
               </div>
             </Link>

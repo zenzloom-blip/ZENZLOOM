@@ -46,14 +46,14 @@ const ProductCard = ({ product, priority = false }) => {
       </Link>
 
       {/* INFO */}
-      <div className="mt-6 space-y-2">
-        <div className="flex justify-between items-start">
-          <h3 className="text-lg font-bold tracking-tight text-gray-900 group-hover:text-gray-600 transition-colors">
+      <div className="mt-4 sm:mt-6 space-y-1 sm:space-y-2">
+        <div className="flex flex-col sm:flex-row justify-between items-start gap-1">
+          <h3 className="text-xs sm:text-sm md:text-lg font-black tracking-tight text-gray-900 group-hover:text-gray-600 transition-colors line-clamp-2 leading-tight">
             {product.name}
           </h3>
-          <p className="text-lg font-black">₹{product.price}</p>
+          <p className="text-sm sm:text-base md:text-lg font-black text-[#86bd22]">₹{product.price}</p>
         </div>
-        <p className="text-sm text-gray-500 font-medium uppercase tracking-widest">
+        <p className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase tracking-[0.2em]">
           {product.category}
         </p>
       </div>

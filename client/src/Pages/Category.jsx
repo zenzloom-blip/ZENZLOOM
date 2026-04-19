@@ -60,16 +60,16 @@ const Category = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="pt-32 pb-24 px-6 max-w-7xl mx-auto">
+    <div className="pt-24 sm:pt-32 pb-20 sm:pb-24 px-4 sm:px-6 max-w-7xl mx-auto">
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-baseline mb-16 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-baseline mb-8 sm:mb-16 gap-4">
         <div>
-          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+          <nav className="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-400 mb-2 sm:mb-4">
             <Link to="/" className="hover:text-black transition">Home</Link>
             <span>/</span>
-            <span className="text-black">{type}</span>
+            <span className="text-black capitalize">{type}</span>
           </nav>
-          <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tighter">{type}</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">{type}</h1>
         </div>
         <p className="text-gray-500 font-medium">
           Showing {products.length} unique pieces
