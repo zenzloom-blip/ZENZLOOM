@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import OptimizedImage from "./OptimizedImage";
 
-const CategoryCard = ({ category }) => {
+const CategoryCard = ({ category, priority = false }) => {
   return (
     <Link
       to={`/category/${category.type}`}
@@ -12,6 +12,7 @@ const CategoryCard = ({ category }) => {
         alt={category.name}
         width={800}
         height={400}
+        priority={priority}
         imgClassName="group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">

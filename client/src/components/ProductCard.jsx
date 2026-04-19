@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import OptimizedImage from "./OptimizedImage";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, priority = false }) => {
   return (
     <div className="group relative card-hover">
       {/* IMAGE CONTAINER */}
@@ -11,6 +11,7 @@ const ProductCard = ({ product }) => {
           alt={product.name}
           width={600} // Request 600px width for better quality on retina displays
           height={800}
+          priority={priority}
           imgClassName="group-hover:scale-110"
         />
 

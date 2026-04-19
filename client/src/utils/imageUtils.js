@@ -34,6 +34,7 @@ export const optimizeCloudinaryUrl = (url, options = {}) => {
   
   if (width) transformation += `,w_${width}`;
   if (height) transformation += `,h_${height}`;
+  if (options.blur) transformation += `,e_blur:${options.blur}`;
   if (width || height) transformation += `,c_${crop}`;
 
   return `${prefix}${transformation}/${suffix}`;
@@ -54,4 +55,18 @@ export const getImageUrl = (img) => {
   // Prepend apiUrl only for relative paths that don't start with /
   const baseUrl = apiUrl.endsWith("/") ? apiUrl.slice(0, -1) : apiUrl;
   return `${baseUrl}/${img}`;
+};
+
+/**
+ * Generates a tiny, blurred placeholder URL for a Cloudinary image.
+ * @param {string} url - The original image URL
+ * @returns {string} - The LQIP URL
+ */
+export const getLqipUrl = (url) => {
+  if (!url) return "";
+  return optimizeCloudinaryUrl(url, {
+    width: 30, // Tiny width
+    quality: 1, // Low quality
+    blur: 1000, // High blur
+  });
 };

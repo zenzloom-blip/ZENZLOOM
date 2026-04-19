@@ -98,6 +98,7 @@ const Home = () => {
             alt="Hero"
             width={1920}
             height={1080}
+            priority={true}
             imgClassName="animate-pulse-slow"
           />
         </div>
@@ -138,7 +139,7 @@ const Home = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((cat) => (
-            <CategoryCard key={cat.type} category={cat} />
+            <CategoryCard key={cat.type} category={cat} priority={true} />
           ))}
         </div>
       </section>
@@ -152,8 +153,12 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
+            {products.map((product, index) => (
+              <ProductCard 
+                key={product._id} 
+                product={product} 
+                priority={index < 4} // Eager load first row
+              />
             ))}
           </div>
 

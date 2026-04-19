@@ -71,6 +71,7 @@ const ProductDetails = () => {
                                 alt={product.name} 
                                 width={800} // Reduced for faster initial load
                                 height={1000}
+                                priority={true}
                                 className={`w-full h-full transition-opacity duration-300 ${isZooming ? 'opacity-0' : 'opacity-100'}`}
                             />
 

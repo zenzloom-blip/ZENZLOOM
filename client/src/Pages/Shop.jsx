@@ -51,8 +51,12 @@ const Shop = () => {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
-          {products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+          {products.map((product, index) => (
+            <ProductCard 
+              key={product._id} 
+              product={product} 
+              priority={index < 4} // Priority for top row
+            />
           ))}
         </div>
       )}
