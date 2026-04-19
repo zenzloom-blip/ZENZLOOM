@@ -6,7 +6,7 @@ import { cloudinary } from "../config/cloudinary.js";
 export const getAllProducts = async (req, res) => {
   try {
     const { available } = req.query;
-    const filter = available === "true" ? { isSold: false } : {};
+    const filter = available === "true" ? { isSold: false, inStock: true } : {};
     const products = await Product.find(filter);
     res.status(200).json(products);
   } catch (error) {
@@ -20,7 +20,7 @@ export const getProductsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
     const { available } = req.query;
-    const filter = available === "true" ? { category, isSold: false } : { category };
+    const filter = available === "true" ? { category, isSold: false, inStock: true } : { category };
     const products = await Product.find(filter);
     res.status(200).json(products);
   } catch (error) {

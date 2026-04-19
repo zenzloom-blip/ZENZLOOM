@@ -24,9 +24,13 @@ const ProductCard = ({ product, priority = false }) => {
 
         {/* BADGES */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {product.isSold && (
+          {product.isSold ? (
             <span className="bg-black text-white text-[10px] font-black tracking-[0.2em] px-3 py-1 rounded-full uppercase">
               Sold Out
+            </span>
+          ) : !product.inStock && (
+            <span className="bg-gray-500 text-white text-[10px] font-black tracking-[0.2em] px-3 py-1 rounded-full uppercase">
+              Out of Stock
             </span>
           )}
           {product.quality === "premium" && (

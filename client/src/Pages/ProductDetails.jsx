@@ -120,6 +120,8 @@ const ProductDetails = () => {
                             <p className="text-3xl font-black">₹{product.price}</p>
                             {product.isSold ? (
                                 <span className="text-red-600 font-bold uppercase tracking-widest text-sm">Sold Out</span>
+                            ) : !product.inStock ? (
+                                <span className="text-gray-500 font-bold uppercase tracking-widest text-sm">Temporarily Out of Stock</span>
                             ) : (
                                 <span className="text-green-600 font-bold uppercase tracking-widest text-sm">Only 1 in Stock</span>
                             )}
@@ -147,14 +149,14 @@ const ProductDetails = () => {
                     <div className="pt-10 flex flex-col sm:flex-row gap-4">
                         <button
                             onClick={() => addToCart(product)}
-                            disabled={product.isSold || isInCart}
+                            disabled={product.isSold || !product.inStock || isInCart}
                             className={`flex-1 py-5 rounded-2xl text-sm font-black uppercase tracking-[0.2em] transition-all duration-300 ${
-                                product.isSold || isInCart
+                                product.isSold || !product.inStock || isInCart
                                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                     : "bg-black text-white hover:bg-gray-800 hover:shadow-2xl active:scale-95"
                             }`}
                         >
-                            {product.isSold ? "Piece Sold" : isInCart ? "In Your Cart" : "Claim This Piece"}
+                            {product.isSold ? "Piece Sold" : !product.inStock ? "Out of Stock" : isInCart ? "In Your Cart" : "Claim This Piece"}
                         </button>
                         
                         {/* <button className="p-5 border-2 border-gray-100 rounded-2xl hover:border-black transition-colors group">
