@@ -459,7 +459,7 @@ const Admin = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {products.map(product => (
+                {products.map((product, index) => (
                   <div key={product._id} className="group bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
                     {/* Image Container */}
                     <div className="relative aspect-square overflow-hidden bg-gray-50">
