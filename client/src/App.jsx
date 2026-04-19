@@ -23,11 +23,13 @@
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import AppRoutes from "./routes/AppRoutes";
+import ScrollToTop from "./components/ScrollToTop";
 import "./App.css";
 
 const App = () => {
   return( 
     <div className="min-h-screen flex flex-col">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-grow">
         <AppRoutes />
