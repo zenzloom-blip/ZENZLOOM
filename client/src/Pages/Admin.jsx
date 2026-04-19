@@ -265,7 +265,7 @@ const Admin = () => {
     <div className="min-h-screen bg-gray-50 pb-20 pt-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
             <div className="p-3 bg-green-100 rounded-xl text-[#86bd22]">
               <FiDollarSign size={24} />
@@ -285,12 +285,21 @@ const Admin = () => {
             </div>
           </div>
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
-            <div className="p-3 bg-purple-100 rounded-xl text-purple-600">
+            <div className="p-3 bg-indigo-100 rounded-xl text-indigo-600">
+              <FiPackage size={24} />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-400">In Stock</p>
+              <h3 className="text-2xl font-bold text-gray-900">{products.filter(p => !p.isSold && p.inStock).length}</h3>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
+            <div className="p-3 bg-orange-100 rounded-xl text-orange-600">
               <FiActivity size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-400">Active Inventory</p>
-              <h3 className="text-2xl font-bold text-gray-900">{products.filter(p => !p.isSold && p.inStock).length}</h3>
+              <p className="text-sm font-medium text-gray-400">Out of Stock</p>
+              <h3 className="text-2xl font-bold text-gray-900">{products.filter(p => !p.isSold && !p.inStock).length}</h3>
             </div>
           </div>
         </div>
