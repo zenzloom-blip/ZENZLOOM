@@ -4,11 +4,11 @@ const orderSchema = mongoose.Schema(
   {
     customer: {
       name: { type: String, required: true },
-      email: { type: String, required: true },
-      phone: { type: String, required: true },
-      address: { type: String, required: true },
-      city: { type: String, required: true },
-      pincode: { type: String, required: true },
+      email: { type: String },
+      phone: { type: String },
+      address: { type: String },
+      city: { type: String },
+      pincode: { type: String },
     },
     orderItems: [
       {
