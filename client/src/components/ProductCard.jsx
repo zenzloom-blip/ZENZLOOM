@@ -5,22 +5,22 @@ const ProductCard = ({ product, priority = false }) => {
   return (
     <div className="group relative card-hover">
       {/* IMAGE CONTAINER */}
-      <Link to={`/product/${product._id}`} className="block relative aspect-[3/4] overflow-hidden rounded-2xl bg-gray-100">
+      <Link to={`/product/${product._id}`} className="block relative aspect-[3/4] overflow-hidden rounded-2xl bg-gray-100 group">
         <OptimizedImage
           src={product.images[0]}
           alt={product.name}
           width={600}
           height={800}
           priority={priority}
-          imgClassName={`group-hover:scale-110 transition-all duration-500 ${(!product.inStock || product.isSold) ? "opacity-80 pb-4" : ""}`}
+          imgClassName={`group-hover:scale-110 transition-all duration-700 ${(!product.inStock || product.isSold) ? "opacity-60 grayscale-[0.5]" : ""}`}
         />
 
-        {/* REFINED OVERLAY FOR UNAVAILABLE ITEMS */}
+        {/* HIGH-VISIBILITY STATUS OVERLAY */}
         {(!product.inStock || product.isSold) && (
-          <div className="absolute inset-0 flex items-center justify-center p-6 bg-black/5">
-            <div className="bg-white/80 backdrop-blur-md border border-white/50 px-5 py-2.5 rounded-full shadow-2xl transform tracking-[0.2em] animate-in zoom-in-90 duration-300">
-              <span className="text-black text-[10px] font-black uppercase text-center block">
-                {product.isSold ? "Piece Sold" : "Restocking Soon"}
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 bg-black/10 transition-all group-hover:bg-black/20">
+            <div className="bg-white/90 backdrop-blur-md border border-white/50 px-6 py-3 rounded-2xl shadow-xl transform scale-100 group-hover:scale-110 transition-transform duration-300">
+              <span className="text-black text-[11px] font-black uppercase tracking-[0.2em] text-center block leading-none">
+                {product.isSold ? "Piece Sold" : "Out of Stock"}
               </span>
             </div>
           </div>
@@ -28,21 +28,21 @@ const ProductCard = ({ product, priority = false }) => {
 
         {/* OVERLAY ON HOVER (Only for available items) */}
         {product.inStock && !product.isSold && (
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <span className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+          <div className="absolute inset-0 z-20 bg-black/20 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+            <div className="bg-white text-black px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-2xl">
               View Details
-            </span>
+            </div>
           </div>
         )}
 
-        {/* BADGES */}
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {product.quality === "premium" && (
-            <span className="bg-white text-black text-[10px] font-black tracking-[0.2em] px-3 py-1 rounded-full uppercase shadow-sm">
+        {/* PREMIUM BADGE */}
+        {product.quality === "premium" && (
+          <div className="absolute top-4 left-4 z-30">
+            <span className="bg-white/90 backdrop-blur-md text-black text-[10px] font-black tracking-[0.2em] px-3 py-1.5 rounded-lg uppercase shadow-sm border border-white/50">
               Premium
             </span>
-          )}
-        </div>
+          </div>
+        )}
       </Link>
 
       {/* INFO */}
