@@ -17,10 +17,10 @@ const CategoryCard = ({ category, priority = false, className = "" }) => {
       />
       
       {/* LUXE OVERLAY */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-8 transform transition-transform duration-500">
-        <span className="inline-block px-3 py-1 mb-4 border border-white/30 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-white/80 backdrop-blur-sm">
+      <div className="absolute bottom-0 left-0 right-0 p-8 z-20 transform transition-transform duration-500">
+        <span className="inline-block px-3 py-1 mb-4 border border-white/30 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-white/80 backdrop-blur-md">
           Curated collection
         </span>
         <h3 className="text-white text-4xl font-black uppercase tracking-tighter leading-none mb-4 transform transition-transform duration-500 group-hover:translate-x-2">

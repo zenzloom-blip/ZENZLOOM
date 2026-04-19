@@ -39,20 +39,20 @@ const Categories = () => {
                 height={1000}
                 imgClassName="grayscale group-hover:grayscale-0 group-hover:scale-110" 
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
-              
-              <div className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10 text-white">
-                <span className="inline-block px-3 py-1 mb-2 sm:mb-4 border border-white/30 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest backdrop-blur-sm">
-                  Curated Collection
-                </span>
-                <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter leading-none mb-2 sm:mb-4 group-hover:translate-x-2 transition-transform duration-500">
-                  {cat.name}
-                </h2>
-                <div className="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
-                  View Pieces
-                  <span className="text-lg sm:text-xl">→</span>
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500"></div>
+                
+                <div className="absolute bottom-6 left-6 sm:bottom-10 sm:left-10 z-20 text-white">
+                  <span className="inline-block px-3 py-1 mb-2 sm:mb-4 border border-white/30 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-widest backdrop-blur-md">
+                    Curated Collection
+                  </span>
+                  <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter leading-none mb-2 sm:mb-4 group-hover:translate-x-2 transition-transform duration-500">
+                    {cat.name}
+                  </h2>
+                  <div className="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                    View Pieces
+                    <span className="text-lg sm:text-xl">→</span>
+                  </div>
                 </div>
-              </div>
             </Link>
           </div>
         ))}
