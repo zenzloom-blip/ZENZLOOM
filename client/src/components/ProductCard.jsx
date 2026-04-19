@@ -12,15 +12,17 @@ const ProductCard = ({ product, priority = false }) => {
           width={600}
           height={800}
           priority={priority}
-          imgClassName={`group-hover:scale-110 ${(!product.inStock || product.isSold) ? "grayscale opacity-60" : ""}`}
+          imgClassName={`group-hover:scale-110 transition-all duration-500 ${(!product.inStock || product.isSold) ? "opacity-80 pb-4" : ""}`}
         />
 
-        {/* OVERLAY FOR UNAVAILABLE ITEMS */}
+        {/* REFINED OVERLAY FOR UNAVAILABLE ITEMS */}
         {(!product.inStock || product.isSold) && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
-            <span className="text-white text-lg font-black uppercase tracking-[0.3em] border-2 border-white px-4 py-2 text-center leading-tight">
-              {product.isSold ? "Sold Out" : "Out of Stock"}
-            </span>
+          <div className="absolute inset-0 flex items-center justify-center p-6 bg-black/5">
+            <div className="bg-white/80 backdrop-blur-md border border-white/50 px-5 py-2.5 rounded-full shadow-2xl transform tracking-[0.2em] animate-in zoom-in-90 duration-300">
+              <span className="text-black text-[10px] font-black uppercase text-center block">
+                {product.isSold ? "Piece Sold" : "Restocking Soon"}
+              </span>
+            </div>
           </div>
         )}
 

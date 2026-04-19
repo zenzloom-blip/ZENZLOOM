@@ -7,7 +7,7 @@ export const getAllProducts = async (req, res) => {
   try {
     const { available } = req.query;
     // Show all items regardless of stock status as per user request
-    const filter = {}; 
+    const filter = {};
     const products = await Product.find(filter);
     res.status(200).json(products);
   } catch (error) {
@@ -50,7 +50,7 @@ export const getProductById = async (req, res) => {
 export const createProduct = async (req, res) => {
   try {
     const { name, description, price, category, size, quality } = req.body;
-    
+
     // images will come from Cloudinary via req.files
     const images = req.files ? req.files.map(file => file.path) : [];
 
@@ -100,10 +100,10 @@ export const updateProduct = async (req, res) => {
       if (req.files && req.files.length > 0) {
         const newImages = req.files.map(file => file.path);
         const currentExisting = existingImages ? (typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages) : product.images;
-        
+
         // Find images to delete from Cloudinary
         const imagesToDelete = product.images.filter(img => !currentExisting.includes(img));
-        
+
         for (const imageUrl of imagesToDelete) {
           if (imageUrl.includes("cloudinary.com")) {
             const urlParts = imageUrl.split("/");
@@ -122,9 +122,9 @@ export const updateProduct = async (req, res) => {
       } else if (existingImages) {
         // No new files, but maybe some existing ones were removed
         const currentExisting = typeof existingImages === 'string' ? JSON.parse(existingImages) : existingImages;
-        
+
         const imagesToDelete = product.images.filter(img => !currentExisting.includes(img));
-        
+
         for (const imageUrl of imagesToDelete) {
           if (imageUrl.includes("cloudinary.com")) {
             const urlParts = imageUrl.split("/");
@@ -138,7 +138,7 @@ export const updateProduct = async (req, res) => {
             }
           }
         }
-        
+
         product.images = currentExisting;
       }
 
@@ -167,7 +167,7 @@ export const deleteProduct = async (req, res) => {
             const urlParts = imageUrl.split("/");
             const publicIdWithExtension = urlParts[urlParts.length - 1];
             const publicId = `zenzloom_products/${publicIdWithExtension.split(".")[0]}`;
-            
+
             try {
               await cloudinary.uploader.destroy(publicId);
               console.log(`Deleted from Cloudinary: ${publicId}`);
