@@ -9,30 +9,32 @@ const ProductCard = ({ product, priority = false }) => {
         <OptimizedImage
           src={product.images[0]}
           alt={product.name}
-          width={600} // Request 600px width for better quality on retina displays
+          width={600}
           height={800}
           priority={priority}
-          imgClassName="group-hover:scale-110"
+          imgClassName={`group-hover:scale-110 ${(!product.inStock || product.isSold) ? "grayscale opacity-60" : ""}`}
         />
 
-        {/* OVERLAY ON HOVER */}
-        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <span className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-            View Details
-          </span>
-        </div>
+        {/* OVERLAY FOR UNAVAILABLE ITEMS */}
+        {(!product.inStock || product.isSold) && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center p-4">
+            <span className="text-white text-lg font-black uppercase tracking-[0.3em] border-2 border-white px-4 py-2 text-center leading-tight">
+              {product.isSold ? "Sold Out" : "Out of Stock"}
+            </span>
+          </div>
+        )}
+
+        {/* OVERLAY ON HOVER (Only for available items) */}
+        {product.inStock && !product.isSold && (
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <span className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold uppercase tracking-widest transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+              View Details
+            </span>
+          </div>
+        )}
 
         {/* BADGES */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {product.isSold ? (
-            <span className="bg-black text-white text-[10px] font-black tracking-[0.2em] px-3 py-1 rounded-full uppercase">
-              Sold Out
-            </span>
-          ) : !product.inStock && (
-            <span className="bg-gray-500 text-white text-[10px] font-black tracking-[0.2em] px-3 py-1 rounded-full uppercase">
-              Out of Stock
-            </span>
-          )}
           {product.quality === "premium" && (
             <span className="bg-white text-black text-[10px] font-black tracking-[0.2em] px-3 py-1 rounded-full uppercase shadow-sm">
               Premium
