@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FiUpload, FiTrash2, FiEdit2, FiPlus, FiX, FiCheckCircle, FiPackage, FiActivity } from "react-icons/fi";
+import OptimizedImage from "../components/OptimizedImage";
 
 const Admin = () => {
   const [products, setProducts] = useState([]);
@@ -376,7 +377,16 @@ const Admin = () => {
                         <div className="mt-4 flex flex-wrap gap-3">
                           {previewUrls.map((url, index) => (
                             <div key={index} className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-100 shadow-sm animate-in zoom-in-50 duration-300">
-                              <img src={url} alt="preview" className="w-full h-full object-cover" />
+                              {url.startsWith('blob:') ? (
+                                <img src={url} alt="preview" className="w-full h-full object-cover" />
+                              ) : (
+                                <OptimizedImage 
+                                  src={url} 
+                                  alt="preview" 
+                                  width={100} 
+                                  height={100} 
+                                />
+                              )}
                               <button
                                 type="button"
                                 onClick={() => {
@@ -453,10 +463,13 @@ const Admin = () => {
                   <div key={product._id} className="group bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
                     {/* Image Container */}
                     <div className="relative aspect-square overflow-hidden bg-gray-50">
-                      <img
-                        src={product.images[0] ? (product.images[0].startsWith("http") ? product.images[0] : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}${product.images[0]}`) : "https://via.placeholder.com/300"}
+                      <OptimizedImage
+                        src={product.images[0]}
                         alt={product.name}
-                        className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ${product.isSold ? "grayscale" : ""}`}
+                        width={400}
+                        height={400}
+                        priority={index < 8}
+                        imgClassName={`transition-transform duration-500 group-hover:scale-110 ${product.isSold ? "grayscale" : ""}`}
                       />
                       <div className="absolute top-4 left-4 flex gap-2">
                         <span className="bg-white/90 backdrop-blur-sm text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">₹{product.price}</span>
@@ -530,9 +543,11 @@ const Admin = () => {
                       <div className="flex flex-wrap gap-2 lg:justify-end">
                         {order.orderItems.map((item, idx) => (
                           <div key={idx} className="relative group/item">
-                            <img 
-                              src={item.image.startsWith("http") ? item.image : `${import.meta.env.VITE_API_URL || ""}${item.image}`} 
+                            <OptimizedImage 
+                              src={item.image} 
                               alt={item.name} 
+                              width={100}
+                              height={100}
                               className="w-14 h-14 rounded-xl object-cover border border-gray-100 shadow-sm"
                             />
                             <div className="absolute -top-2 -right-2 bg-black text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-opacity flex-col">
