@@ -102,7 +102,8 @@ const Home = () => {
             priority={true}
             imgClassName="object-cover w-full h-full"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent"></div>
+          {/* Strengthened Gradient for maximum text legibility */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"></div>
         </div>
 
         {/* CONTENT LAYER */}
@@ -115,7 +116,7 @@ const Home = () => {
               REDEFINE <br />
               <span className="text-outline-white">VINTAGE.</span>
             </h1>
-            <p className="max-w-md text-lg text-gray-300 mb-10 font-medium leading-relaxed">
+            <p className="max-w-md text-lg text-white mb-10 font-bold leading-relaxed drop-shadow-lg">
               Discover curated, high-quality thrift pieces that tell a story.
               Sustainable fashion for the modern individual.
             </p>
