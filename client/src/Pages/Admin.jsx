@@ -673,7 +673,7 @@ const Admin = () => {
               </div>
             )}
           </div>
-        ) : (
+        ) : activeTab === "orders" ? (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center space-x-2">
               <h2 className="text-2xl font-bold text-gray-900">Recent Orders</h2>
@@ -811,5 +811,9 @@ const Admin = () => {
              </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+};
 
 export default Admin;
