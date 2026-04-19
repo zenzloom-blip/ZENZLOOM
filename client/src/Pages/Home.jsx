@@ -92,7 +92,8 @@ const Home = () => {
     <div className="pt-16">
       {/* HERO SECTION */}
       <section className="relative h-[90vh] flex items-center overflow-hidden bg-black">
-        <div className="absolute inset-0">
+        {/* BACKGROUND LAYER */}
+        <div className="absolute inset-0 z-0">
           <OptimizedImage
             src="/hero banner.jpg"
             alt="Hero"
@@ -101,28 +102,31 @@ const Home = () => {
             priority={true}
             imgClassName="object-cover w-full h-full"
           />
-          {/* Targeted Gradient for Text Readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent"></div>
         </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-white">
-          <span className="inline-block px-4 py-1 mb-6 border border-white/30 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm">
-            Exclusive Thrift Collection
-          </span>
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8">
-            REDEFINE <br />
-            <span className="text-outline-white">VINTAGE.</span>
-          </h1>
-          <p className="max-w-md text-lg text-gray-300 mb-10 font-medium leading-relaxed">
-            Discover curated, high-quality thrift pieces that tell a story.
-            Sustainable fashion for the modern individual.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link to="/shop" className="btn-primary bg-white text-black hover:bg-gray-200">
-              Shop Now
-            </Link>
-            <Link to="/shop" className="btn-outline border-white text-white hover:bg-white hover:text-black">
-              View All
-            </Link>
+
+        {/* CONTENT LAYER */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-white pointer-events-none">
+          <div className="max-w-2xl pointer-events-auto">
+            <span className="inline-block px-4 py-1 mb-6 border border-white/30 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm">
+              Exclusive Thrift Collection
+            </span>
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-8">
+              REDEFINE <br />
+              <span className="text-outline-white">VINTAGE.</span>
+            </h1>
+            <p className="max-w-md text-lg text-gray-300 mb-10 font-medium leading-relaxed">
+              Discover curated, high-quality thrift pieces that tell a story.
+              Sustainable fashion for the modern individual.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Link to="/shop" className="btn-primary bg-white text-black hover:bg-gray-200">
+                Shop Now
+              </Link>
+              <Link to="/shop" className="btn-outline border-white text-white hover:bg-white hover:text-black">
+                View All
+              </Link>
+            </div>
           </div>
         </div>
       </section>
