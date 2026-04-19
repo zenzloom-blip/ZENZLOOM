@@ -90,7 +90,53 @@ export const verifyPayment = async (req, res) => {
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find({ isPaid: true }).sort({ createdAt: -1 });
-    res.status(200).json(orders);
+    
+    // Calculate stats
+    const stats = {
+      totalRevenue: orders.reduce((acc, curr) => acc + curr.totalPrice, 0),
+      totalOrders: orders.length,
+      onlineSales: orders.filter(o => o.orderType !== 'offline').reduce((acc, curr) => acc + curr.totalPrice, 0),
+      offlineSales: orders.filter(o => o.orderType === 'offline').reduce((acc, curr) => acc + curr.totalPrice, 0),
+    };
+
+    res.status(200).json({ orders, stats });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Create manual offline order
+// @route   POST /api/payment/manual
+export const createManualOrder = async (req, res) => {
+  try {
+    const { amount, customer, cartItems } = req.body;
+
+    const newOrder = new Order({
+      customer,
+      orderItems: cartItems.map(item => ({
+        name: item.name,
+        price: item.price,
+        image: item.images && item.images.length > 0 ? item.images[0] : (item.image || "https://via.placeholder.com/300"),
+        product: item._id
+      })),
+      totalPrice: amount,
+      isPaid: true,
+      paidAt: Date.now(),
+      orderType: "offline",
+      razorpayOrderId: `OFFLINE_${Date.now()}`
+    });
+
+    const savedOrder = await newOrder.save();
+
+    // Mark products as sold
+    for (const item of cartItems) {
+      await Product.findByIdAndUpdate(item._id, {
+        isSold: true,
+        inStock: false
+      });
+    }
+
+    res.status(201).json(savedOrder);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -25,7 +25,8 @@ const orderSchema = mongoose.Schema(
     totalPrice: { type: Number, required: true },
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: { type: Date },
-    razorpayOrderId: { type: String, required: true },
+    orderType: { type: String, enum: ["online", "offline"], default: "online" },
+    razorpayOrderId: { type: String }, // Make optional for manual orders
     razorpayPaymentId: { type: String },
   },
   {

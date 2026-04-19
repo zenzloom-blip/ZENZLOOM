@@ -18,6 +18,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  toggleStockStatus,
 } from "../controllers/productController.js";
 import upload from "../middlewares/uploadMiddleware.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
@@ -32,6 +33,9 @@ router.get("/category/:category", getProductsByCategory);
 
 // Get product by ID
 router.get("/:id", getProductById);
+
+// Toggle Stock Status
+router.patch("/:id/toggle-stock", authMiddleware, toggleStockStatus);
 
 // Create a product (with image upload)
 router.post("/", authMiddleware, upload.array("images", 10), createProduct);

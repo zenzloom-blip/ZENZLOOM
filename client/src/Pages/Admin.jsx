@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FiUpload, FiTrash2, FiEdit2, FiPlus, FiX, FiCheckCircle, FiPackage, FiActivity } from "react-icons/fi";
+import { FiUpload, FiTrash2, FiEdit2, FiPlus, FiX, FiCheckCircle, FiPackage, FiActivity, FiDollarSign, FiShoppingBag, FiPlusSquare } from "react-icons/fi";
 import OptimizedImage from "../components/OptimizedImage";
 
 const Admin = () => {
@@ -25,6 +25,25 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState("products"); // "products" or "orders"
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    onlineSales: 0,
+    offlineSales: 0
+  });
+
+  // Manual Order State
+  const [showManualSale, setShowManualSale] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [manualCustomer, setManualCustomer] = useState({
+    name: "",
+    email: "offline@zenzloom.com",
+    phone: "",
+    address: "Offline Sale",
+    city: "Local",
+    pincode: "000000"
+  });
 
   const API_URL = `${import.meta.env.VITE_API_URL || ""}/api/products`;
   const ORDERS_API_URL = `${import.meta.env.VITE_API_URL || ""}/api/payment`;
@@ -61,7 +80,8 @@ const Admin = () => {
       const { data } = await axios.get(ORDERS_API_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setOrders(data);
+      setOrders(data.orders);
+      setStats(data.stats);
     } catch (error) {
       console.error("Error fetching orders:", error);
       if (error.response && error.response.status === 401) {
@@ -152,6 +172,47 @@ const Admin = () => {
     }
   };
 
+  const handleToggleStock = async (id) => {
+    const token = localStorage.getItem("adminToken");
+    try {
+      const { data } = await axios.patch(`${API_URL}/${id}/toggle-stock`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setProducts(products.map(p => p._id === id ? data : p));
+    } catch (error) {
+      console.error("Error toggling stock:", error);
+      alert("Failed to update stock status");
+    }
+  };
+
+  const handleManualSale = async (e) => {
+    e.preventDefault();
+    if (!selectedProduct) return alert("Select a product first!");
+    
+    setIsSubmitting(true);
+    const token = localStorage.getItem("adminToken");
+    try {
+      await axios.post(`${ORDERS_API_URL}/manual-order`, {
+        amount: selectedProduct.price,
+        customer: manualCustomer,
+        cartItems: [selectedProduct]
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert("Offline sale recorded! 💰");
+      setShowManualSale(false);
+      setSelectedProduct(null);
+      fetchOrders(token);
+      fetchProducts(token);
+    } catch (error) {
+      console.error("Manual sale error:", error);
+      alert("Failed to record offline sale");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -207,35 +268,41 @@ const Admin = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
             <div className="p-3 bg-green-100 rounded-xl text-[#86bd22]">
-              <FiPackage size={24} />
+              <FiDollarSign size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-400">Total Products</p>
-              <h3 className="text-2xl font-bold text-gray-900">{products.length}</h3>
+              <p className="text-sm font-medium text-gray-400">Total Revenue</p>
+              <h3 className="text-2xl font-bold text-gray-900">₹{stats.totalRevenue.toLocaleString()}</h3>
             </div>
           </div>
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
             <div className="p-3 bg-blue-100 rounded-xl text-blue-600">
-              <FiActivity size={24} />
+              <FiShoppingBag size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-400">Inventory Status</p>
-              <h3 className="text-2xl font-bold text-gray-900">Active</h3>
+              <p className="text-sm font-medium text-gray-400">Pieces Sold</p>
+              <h3 className="text-2xl font-bold text-gray-900">{stats.totalOrders}</h3>
             </div>
           </div>
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-4">
             <div className="p-3 bg-purple-100 rounded-xl text-purple-600">
-              <FiCheckCircle size={24} />
+              <FiActivity size={24} />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-400">Cloud Sync</p>
-              <h3 className="text-2xl font-bold text-green-500">Connected</h3>
+              <p className="text-sm font-medium text-gray-400">Active Inventory</p>
+              <h3 className="text-2xl font-bold text-gray-900">{products.filter(p => !p.isSold && p.inStock).length}</h3>
             </div>
           </div>
         </div>
         {/* Action Header & Tabs */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex items-center space-x-1 bg-gray-200/50 p-1 rounded-2xl w-fit">
+            <button
+              onClick={() => setActiveTab("revenue")}
+              className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === "revenue" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+            >
+              Revenue
+            </button>
             <button
               onClick={() => setActiveTab("products")}
               className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === "products" ? "bg-white text-black shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
@@ -251,14 +318,22 @@ const Admin = () => {
           </div>
           
           {activeTab === "products" && (
-            <button
-              onClick={() => { resetForm(); setShowAddForm(!showAddForm); }}
-              className={`flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                showAddForm ? "bg-gray-200 text-gray-700" : "bg-[#86bd22] text-white shadow-lg shadow-green-200 hover:scale-105 active:scale-95"
-              }`}
-            >
-              {showAddForm ? <><FiX /> <span>Cancel</span></> : <><FiPlus /> <span>Add New Product</span></>}
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowManualSale(true)}
+                className="flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold bg-black text-white hover:bg-gray-800 transition-all active:scale-95"
+              >
+                <FiPlusSquare /> <span>Manual Offline Sale</span>
+              </button>
+              <button
+                onClick={() => { resetForm(); setShowAddForm(!showAddForm); }}
+                className={`flex items-center justify-center space-x-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                  showAddForm ? "bg-gray-200 text-gray-700" : "bg-[#86bd22] text-white shadow-lg shadow-green-200 hover:scale-105 active:scale-95"
+                }`}
+              >
+                {showAddForm ? <><FiX /> <span>Cancel</span></> : <><FiPlus /> <span>Add New Product</span></>}
+              </button>
+            </div>
           )}
         </div>
 
@@ -430,6 +505,84 @@ const Admin = () => {
             </div>
           </div>
         )}
+
+        {/* Manual Sale Modal (Simplified) */}
+        {showManualSale && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+              <div className="p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-black uppercase">Record Offline Sale</h2>
+                  <button onClick={() => { setShowManualSale(false); setSelectedProduct(null); }}><FiX size={24} /></button>
+                </div>
+
+                <form onSubmit={handleManualSale} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-bold uppercase tracking-wider mb-2">1. Select Product</label>
+                    <div className="relative">
+                      <input 
+                        type="text" 
+                        placeholder="Search product name..." 
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-black outline-none"
+                        name="productSearch"
+                        autoComplete="off"
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      {searchQuery && (
+                        <div className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl mt-2 max-h-48 overflow-y-auto z-10 shadow-2xl">
+                          {products
+                            .filter(p => !p.isSold && p.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                            .map(p => (
+                              <div 
+                                key={p._id} 
+                                onClick={() => { setSelectedProduct(p); setSearchQuery(""); }}
+                                className="p-3 hover:bg-gray-50 cursor-pointer flex items-center gap-3"
+                              >
+                                <img src={p.images[0]} className="w-8 h-8 rounded object-cover" />
+                                <span className="font-bold">{p.name} - ₹{p.price}</span>
+                              </div>
+                            ))
+                          }
+                        </div>
+                      )}
+                    </div>
+                    {selectedProduct && (
+                      <div className="mt-3 p-3 bg-green-50 rounded-xl flex items-center justify-between border border-green-100">
+                        <span className="font-bold text-green-700">Selected: {selectedProduct.name}</span>
+                        <FiCheckCircle className="text-green-600" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4 pt-4 border-t border-gray-100">
+                    <label className="block text-sm font-bold uppercase tracking-wider">2. Customer Details</label>
+                    <input 
+                      type="text" 
+                      placeholder="Customer Name" 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200"
+                      required
+                      onChange={(e) => setManualCustomer({...manualCustomer, name: e.target.value})}
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="Customer Phone (Optional)" 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200"
+                      onChange={(e) => setManualCustomer({...manualCustomer, phone: e.target.value})}
+                    />
+                  </div>
+
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting || !selectedProduct}
+                    className="w-full py-4 bg-black text-white rounded-xl font-black uppercase tracking-widest hover:bg-gray-800 transition-all disabled:opacity-50"
+                  >
+                    {isSubmitting ? "Recording..." : "Mark as Sold Offline"}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Main Content Area */}
         {activeTab === "products" ? (
           <div className="space-y-6">
@@ -471,10 +624,12 @@ const Admin = () => {
                         priority={index < 8}
                         imgClassName={`transition-transform duration-500 group-hover:scale-110 ${product.isSold ? "grayscale" : ""}`}
                       />
-                      <div className="absolute top-4 left-4 flex gap-2">
-                        <span className="bg-white/90 backdrop-blur-sm text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">₹{product.price}</span>
-                        <span className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-sm ${product.quality === 'premium' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>{product.quality}</span>
-                        {product.isSold && <span className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">SOLD OUT</span>}
+                      <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        <span className="bg-white/90 backdrop-blur-sm text-xs font-bold px-3 py-1.5 rounded-full shadow-sm w-fit">₹{product.price}</span>
+                        <span className={`text-[10px] uppercase font-black px-3 py-1.5 rounded-full shadow-sm w-fit ${product.inStock ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
+                          {product.inStock ? 'In Stock' : 'Out of Stock'}
+                        </span>
+                        {product.isSold && <span className="bg-red-500 text-white text-[10px] font-black px-3 py-1.5 rounded-full shadow-lg w-fit">SOLD OUT</span>}
                       </div>
                     </div>
 
@@ -487,11 +642,22 @@ const Admin = () => {
                       
                       <div className="flex items-center gap-4 mt-6">
                         <button
+                          onClick={() => handleToggleStock(product._id)}
+                          title={product.inStock ? "Mark as Out of Stock" : "Mark as In Stock"}
+                          className={`flex-1 flex items-center justify-center space-x-2 py-2.5 rounded-xl font-bold transition-all border ${
+                            product.inStock 
+                              ? "bg-white text-gray-700 border-gray-100 hover:bg-gray-50" 
+                              : "bg-green-50 text-[#86bd22] border-green-100 hover:bg-green-100"
+                          }`}
+                        >
+                          {product.inStock ? <FiX size={16} /> : <FiCheckCircle size={16} />}
+                          <span>{product.inStock ? "Out of Stock" : "Set In Stock"}</span>
+                        </button>
+                        <button
                           onClick={() => handleEdit(product)}
-                          className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-gray-50 text-gray-700 rounded-xl font-bold hover:bg-gray-100 transition-colors border border-gray-100"
+                          className="p-2.5 bg-gray-50 text-gray-700 rounded-xl font-bold hover:bg-gray-100 transition-colors border border-gray-100"
                         >
                           <FiEdit2 size={16} />
-                          <span>Edit</span>
                         </button>
                         <button
                           onClick={() => handleDelete(product._id)}
@@ -532,7 +698,9 @@ const Admin = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="text-xs font-black uppercase text-gray-400">Order #{order._id.slice(-8)}</span>
-                          <span className="bg-green-100 text-green-700 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">PAID</span>
+                          <span className={`text-[10px] font-black px-2 py-0.5 rounded-full uppercase ${order.orderType === 'offline' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                            {order.orderType === 'offline' ? 'OFFLINE SALE' : 'PAID ONLINE'}
+                          </span>
                           <span className="text-xs text-gray-400 font-medium">{new Date(order.createdAt).toLocaleDateString()}</span>
                         </div>
                         <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">{order.customer.name}</h3>
@@ -567,10 +735,81 @@ const Admin = () => {
               </div>
             )}
           </div>
+        ) : (
+          /* REVENUE ANALYTICS TAB */
+          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* REVENUE BREAKDOWN */}
+                <div className="bg-white p-10 rounded-[32px] border border-gray-100 shadow-sm">
+                   <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-8">Revenue Breakdown</h3>
+                   <div className="space-y-8">
+                      <div className="flex justify-between items-end">
+                         <div>
+                            <p className="text-xs font-bold text-gray-500 uppercase mb-1">Online Sales</p>
+                            <h4 className="text-3xl font-black">₹{stats.onlineSales.toLocaleString()}</h4>
+                         </div>
+                         <span className="text-xs font-bold text-green-500">Razorpay</span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                         <div 
+                           className="h-full bg-[#86bd22]" 
+                           style={{ width: `${(stats.onlineSales / stats.totalRevenue) * 100 || 0}%` }}
+                         />
+                      </div>
+                      
+                      <div className="flex justify-between items-end">
+                         <div>
+                            <p className="text-xs font-bold text-gray-500 uppercase mb-1">Offline Sales</p>
+                            <h4 className="text-3xl font-black">₹{stats.offlineSales.toLocaleString()}</h4>
+                         </div>
+                         <span className="text-xs font-bold text-blue-500">Manual</span>
+                      </div>
+                      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                         <div 
+                           className="h-full bg-blue-500" 
+                           style={{ width: `${(stats.offlineSales / stats.totalRevenue) * 100 || 0}%` }}
+                         />
+                      </div>
+                   </div>
+                </div>
+
+                {/* BUSINESS HEALTH */}
+                <div className="bg-black text-white p-10 rounded-[32px] shadow-2xl relative overflow-hidden">
+                   <div className="relative z-10">
+                      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 mb-8">Business Health</h3>
+                      <p className="text-6xl font-black tracking-tighter mb-4">₹{stats.totalRevenue.toLocaleString()}</p>
+                      <p className="text-gray-400 font-medium">Gross revenue generated across all channels. Sustainable growth is visible.</p>
+                      
+                      <div className="mt-12 grid grid-cols-2 gap-4">
+                         <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                            <p className="text-[10px] font-black uppercase text-gray-400 mb-1">Average Order</p>
+                            <p className="text-xl font-black">₹{Math.round(stats.totalRevenue / stats.totalOrders || 0)}</p>
+                         </div>
+                         <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-md">
+                            <p className="text-[10px] font-black uppercase text-gray-400 mb-1">Total Pieces</p>
+                            <p className="text-xl font-black">{stats.totalOrders}</p>
+                         </div>
+                      </div>
+                   </div>
+                   {/* Decorative circle */}
+                   <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#86bd22] rounded-full blur-[100px] opacity-20" />
+                </div>
+             </div>
+
+             {/* MANUAL SALES INFO */}
+             <div className="bg-gray-100 p-8 rounded-[32px] flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <h4 className="text-lg font-bold">Have an offline sale?</h4>
+                  <p className="text-gray-500">Manually record it to keep your inventory and revenue data accurate.</p>
+                </div>
+                <button 
+                  onClick={() => setShowManualSale(true)}
+                  className="bg-black text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all"
+                >
+                  Create Manual Entry
+                </button>
+             </div>
+          </div>
         )}
-      </div>
-    </div>
-  );
-};
 
 export default Admin;
