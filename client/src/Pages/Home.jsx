@@ -92,15 +92,17 @@ const Home = () => {
     <div className="pt-16">
       {/* HERO SECTION */}
       <section className="relative h-[90vh] flex items-center overflow-hidden bg-black">
-        <div className="absolute inset-0 opacity-60">
+        <div className="absolute inset-0">
           <OptimizedImage
             src="/hero banner.jpg"
             alt="Hero"
             width={1920}
             height={1080}
             priority={true}
-            imgClassName="animate-pulse-slow"
+            imgClassName="object-cover w-full h-full"
           />
+          {/* Targeted Gradient for Text Readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent"></div>
         </div>
         <div className="relative max-w-7xl mx-auto px-6 w-full text-white">
           <span className="inline-block px-4 py-1 mb-6 border border-white/30 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm">
