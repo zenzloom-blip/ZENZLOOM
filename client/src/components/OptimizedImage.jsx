@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { optimizeCloudinaryUrl, getImageUrl, getLqipUrl } from "../utils/imageUtils";
 
 /**
@@ -17,6 +17,7 @@ const OptimizedImage = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState(false);
+  const imgRef = useRef(null);
 
   // 1. Resolve the base URL (handles local vs remote)
   const resolvedUrl = getImageUrl(src);
@@ -33,35 +34,44 @@ const OptimizedImage = ({
 
   // Reset state when source changes
   useEffect(() => {
-    setIsLoaded(false);
+    // Check if current image in ref is already complete (cached)
+    if (imgRef.current?.complete) {
+      setIsLoaded(true);
+    } else {
+      setIsLoaded(false);
+    }
     setError(false);
-  }, [src]);
+  }, [optimizedUrl]);
 
   return (
     <div className={`relative overflow-hidden w-full h-full ${className} bg-gray-100`}>
-      {/* SKELETON LOADER - Only show if not loaded and no error */}
+      {/* 1. SKELETON (Lowest layer, always there as bg) */}
       {!isLoaded && !error && (
-        <div className="absolute inset-0 skeleton z-10 w-full h-full" />
+        <div className="absolute inset-0 skeleton z-0 w-full h-full" />
       )}
 
-      {/* LQIP PLACEHOLDER (BLUR-UP) */}
-      {!isLoaded && !error && lqipUrl !== resolvedUrl && (
+      {/* 2. LQIP PLACEHOLDER (Middle layer, blurs up) */}
+      {!error && lqipUrl !== resolvedUrl && (
         <img
           src={lqipUrl}
-          className="absolute inset-0 w-full h-full object-cover blur-lg scale-110 z-0 opacity-50"
+          className={`absolute inset-0 w-full h-full object-cover blur-lg scale-110 z-10 transition-opacity duration-1000 ${
+            isLoaded ? "opacity-0" : "opacity-100"
+          }`}
           alt="loading placeholder"
         />
       )}
 
-      {/* ACTUAL IMAGE */}
+      {/* 3. ACTUAL IMAGE (Top layer, fades in) */}
       <img
+        ref={imgRef}
+        key={optimizedUrl} // Ensure re-mount on URL change for clean state
         src={optimizedUrl}
         alt={alt}
         loading={priority ? "eager" : loading}
         fetchpriority={priority ? "high" : "auto"}
         onLoad={() => setIsLoaded(true)}
         onError={() => setError(true)}
-        className={`w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
+        className={`relative z-20 w-full h-full object-cover transition-opacity duration-700 ease-in-out ${
           isLoaded ? "opacity-100" : "opacity-0"
         } ${props.imgClassName || ""}`}
         {...props}
@@ -69,7 +79,7 @@ const OptimizedImage = ({
 
       {/* ERROR FALLBACK */}
       {error && (
-        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-[10px] text-center p-2 font-black uppercase tracking-widest z-20">
+        <div className="absolute inset-0 bg-gray-100 flex items-center justify-center text-gray-400 text-[10px] text-center p-2 font-black uppercase tracking-widest z-30">
           Image Unavailable
         </div>
       )}
