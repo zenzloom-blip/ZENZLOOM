@@ -9,6 +9,7 @@ import ProductDetails from "../Pages/ProductDetails";
 import Admin from "../Pages/Admin";
 import Login from "../Pages/Login";
 import OrderSuccess from "../Pages/OrderSuccess";
+import AuthCallback from "../Pages/AuthCallback";
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
       <Route path="/admin" element={<Admin />} />
       <Route path="/admin-login" element={<Login />} />
       <Route path="/order-success" element={<OrderSuccess />} />
+      <Route path="/auth-callback" element={<AuthCallback />} />
     </Routes>
   );
 };

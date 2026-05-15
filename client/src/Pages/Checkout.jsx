@@ -25,14 +25,27 @@ const Checkout = () => {
         setCustomer({ ...customer, [name]: value });
     };
 
+    React.useEffect(() => {
+        const token = localStorage.getItem("userToken");
+        if (!token) {
+            // Redirect to Laravel auth
+            window.location.href = "http://localhost:8000/login";
+        }
+    }, []);
+
     const handlePayment = async () => {
         try {
+            const token = localStorage.getItem("userToken");
             const API_BASE_URL = import.meta.env.VITE_API_URL || "";
             // Create order in backend
             const res = await axios.post(`${API_BASE_URL}/api/payment/create-order`, {
                 amount: totalAmount,
                 customer,
                 cartItems
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
 
             const order = res.data;
@@ -46,12 +59,17 @@ const Checkout = () => {
                 order_id: order.id,
                 handler: async function (response) {
                     try {
+                        const token = localStorage.getItem("userToken");
                         const API_BASE_URL = import.meta.env.VITE_API_URL || "";
                         // Verify payment in backend
                         await axios.post(`${API_BASE_URL}/api/payment/verify-payment`, {
                             razorpay_order_id: response.razorpay_order_id,
                             razorpay_payment_id: response.razorpay_payment_id,
                             razorpay_signature: response.razorpay_signature,
+                        }, {
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
                         });
                         alert("Payment Successful 🎉 Order placed.");
                         clearCart();
