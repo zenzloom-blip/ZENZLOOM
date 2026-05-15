@@ -56,6 +56,7 @@ class RegisteredUserController extends Controller
         ];
         $jwt = JWT::encode($payload, env('JWT_SECRET', 'zenzloom_secure_jwt_secret_key_2026'), 'HS256');
 
-        return redirect()->away("http://localhost:5173/auth-callback?token=" . $jwt);
+        $frontendUrl = rtrim(env('FRONTEND_URL', 'http://localhost:5173'), '/');
+        return redirect()->away($frontendUrl . "/auth-callback?token=" . $jwt);
     }
 }

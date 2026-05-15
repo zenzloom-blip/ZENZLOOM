@@ -29,7 +29,8 @@ const Checkout = () => {
         const token = localStorage.getItem("userToken");
         if (!token) {
             // Redirect to Laravel auth
-            window.location.href = "http://localhost:8000/login";
+            const authUrl = import.meta.env.VITE_AUTH_URL || "http://localhost:8000";
+            window.location.href = `${authUrl}/login`;
         }
     }, []);
 
