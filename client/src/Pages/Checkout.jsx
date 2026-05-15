@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import axios from "axios";
+import AuthModal from "../components/AuthModal";
 
 const Checkout = () => {
     const navigate = useNavigate();
     const { cartItems, clearCart } = useCart();
+    const [showAuth, setShowAuth] = useState(false);
     const [customer, setCustomer] = useState({
         name: "",
         email: "",
@@ -28,9 +30,7 @@ const Checkout = () => {
     React.useEffect(() => {
         const token = localStorage.getItem("userToken");
         if (!token) {
-            // Redirect to Laravel auth
-            const authUrl = import.meta.env.VITE_AUTH_URL || "http://localhost:8000";
-            window.location.href = `${authUrl}/login`;
+            setShowAuth(true);
         }
     }, []);
 
@@ -168,6 +168,13 @@ const Checkout = () => {
                     border: 1px solid #eee;
                 }
             `}</style>
+
+            {/* Auth Modal for unauthenticated users */}
+            <AuthModal
+                isOpen={showAuth}
+                onClose={() => setShowAuth(false)}
+                onSuccess={() => setShowAuth(false)}
+            />
         </div>
     );
 };
