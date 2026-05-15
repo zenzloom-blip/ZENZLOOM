@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 # Install dependencies and SQLite extension
 RUN apt-get update && apt-get install -y \
@@ -8,6 +8,10 @@ RUN apt-get update && apt-get install -y \
     sqlite3 \
     libsqlite3-dev \
     && docker-php-ext-install pdo pdo_sqlite zip
+
+# Install Node.js & npm (Required for Laravel Breeze/Vite)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -23,6 +27,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# Build Vite frontend assets
+RUN npm install
+RUN npm run build
 
 # Setup Apache DocumentRoot to point to Laravel's public folder
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
